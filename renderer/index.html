@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Schreckmonitor Gallery</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-content">
+                <div class="logo-section">
+                    <i class="fas fa-camera-retro"></i>
+                    <h1>Schreckmonitor Gallery</h1>
+                </div>
+                
+                <div class="header-controls">
+                    <div class="connection-status" id="connectionStatus">
+                        <i class="fas fa-circle"></i>
+                        <span>Verbindung prüfen...</span>
+                    </div>
+                    
+                    <div class="stats-info" id="statsInfo">
+                        <span class="stat-item">
+                            <i class="fas fa-images"></i>
+                            <span id="totalImages">-</span> Bilder
+                        </span>
+                        <span class="stat-item">
+                            <i class="fas fa-video"></i>
+                            <span id="totalCameras">-</span> Kameras
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-content">
+                <h3>Filter & Navigation</h3>
+                
+                <!-- Kamera-Filter -->
+                <div class="filter-section">
+                    <h4><i class="fas fa-video"></i> Kameras</h4>
+                    <div class="camera-list" id="cameraList">
+                        <div class="camera-item active" data-camera="all">
+                            <i class="fas fa-th-large"></i>
+                            <span>Alle Kameras (neueste 10)</span>
+                            <span class="count" id="allCount">0</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Aktionen -->
+                <div class="action-section">
+                    <h4><i class="fas fa-tools"></i> Aktionen</h4>
+                    <button class="action-btn" id="refreshBtn">
+                        <i class="fas fa-refresh"></i>
+                        Aktualisieren
+                    </button>
+                    <button class="action-btn" id="testConnectionBtn">
+                        <i class="fas fa-plug"></i>
+                        Verbindung testen
+                    </button>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="main-content">
+            <!-- Loading Spinner -->
+            <div class="loading-overlay" id="loadingOverlay">
+                <div class="spinner">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Lade Bilder...</p>
+                </div>
+            </div>
+
+            <!-- Error Message -->
+            <div class="error-message" id="errorMessage" style="display: none;">
+                <div class="error-content">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <h3>Fehler beim Laden der Daten</h3>
+                    <p id="errorText"></p>
+                    <button class="retry-btn" id="retryBtn">
+                        <i class="fas fa-redo"></i>
+                        Erneut versuchen
+                    </button>
+                </div>
+            </div>
+
+            <!-- Gallery Grid -->
+            <div class="gallery-container" id="galleryContainer">
+                <div class="gallery-header">
+                    <h2 id="galleryTitle">Neueste 10 Erkennungen</h2>
+                    <div class="gallery-controls">
+                        <div class="view-controls">
+                            <button class="view-btn active" data-view="grid" title="Rasteransicht">
+                                <i class="fas fa-th"></i>
+                            </button>
+                            <button class="view-btn" data-view="list" title="Listenansicht">
+                                <i class="fas fa-list"></i>
+                            </button>
+                        </div>
+                        <div class="sort-controls">
+                            <select id="sortSelect">
+                                <option value="newest">Neueste zuerst</option>
+                                <option value="oldest">Älteste zuerst</option>
+                                <option value="accuracy">Nach Genauigkeit</option>
+                                <option value="camera">Nach Kamera</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="gallery-grid" id="galleryGrid">
+                    <!-- Dynamisch generierte Bilder werden hier eingefügt -->
+                </div>
+            </div>
+
+            <!-- Empty State -->
+            <div class="empty-state" id="emptyState" style="display: none;">
+                <div class="empty-content">
+                    <i class="fas fa-images"></i>
+                    <h3>Keine aktuellen Bilder gefunden</h3>
+                    <p>Es wurden noch keine Erkennungen in der Datenbank gespeichert oder es gibt keine aktuellen Daten.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal-overlay" id="imageModal">
+        <div class="modal-container">
+            <div class="modal-header">
+                <h3 id="modalTitle">Erkennungsdetails</h3>
+                <button class="close-btn" id="closeModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="modal-content">
+                <div class="modal-image-container">
+                    <img id="modalImage" src="" alt="Erkennung">
+                </div>
+                
+                <div class="modal-details">
+                    <div class="detail-group">
+                        <label>Zeitstempel:</label>
+                        <span id="modalTimestamp"></span>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <label>Kamera:</label>
+                        <span id="modalCamera"></span>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <label>Genauigkeit:</label>
+                        <span id="modalAccuracy"></span>
+                    </div>
+                    
+                    <div class="detail-group">
+                        <label>ID:</label>
+                        <span id="modalId"></span>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="modal-actions">
+                <button class="delete-btn" id="deleteBtn">
+                    <i class="fas fa-trash"></i>
+                    Löschen
+                </button>
+                <button class="close-btn-secondary" id="closeModalSecondary">
+                    Schließen
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <script src="script.js"></script>
+</body>
+</html>
