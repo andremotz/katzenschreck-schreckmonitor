@@ -1,156 +1,157 @@
-# 📦 Installationsanleitung
+# 📦 Installation Guide
 
-## Systemanforderungen installieren
+## Installing System Requirements
 
-### 1. Node.js installieren
+### 1. Install Node.js
 
-**Option A: Über Homebrew (empfohlen für macOS)**
+**Option A: Via Homebrew (recommended for macOS)**
 ```bash
-# Homebrew installieren (falls noch nicht vorhanden)
+# Install Homebrew (if not already installed)
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-# Node.js installieren
+# Install Node.js
 brew install node
 ```
 
-**Option B: Direkter Download**
-1. Besuchen Sie https://nodejs.org/
-2. Laden Sie die LTS-Version für macOS herunter
-3. Führen Sie den Installer aus
+**Option B: Direct Download**
+1. Visit https://nodejs.org/
+2. Download the LTS version for your operating system
+3. Run the installer
 
 **Option C: Node Version Manager (nvm)**
 ```bash
-# nvm installieren
+# Install nvm
 curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.39.0/install.sh | bash
 
-# Terminal neu starten oder:
+# Restart terminal or:
 source ~/.bashrc
 
-# Neueste LTS-Version installieren
+# Install latest LTS version
 nvm install --lts
 nvm use --lts
 ```
 
-### 2. Installation überprüfen
+### 2. Verify Installation
 
 ```bash
-node --version   # Sollte v18.x.x oder höher anzeigen
-npm --version    # Sollte 9.x.x oder höher anzeigen
+node --version   # Should show v18.x.x or higher
+npm --version    # Should show 9.x.x or higher
 ```
 
-## Projekt installieren
+## Install Project
 
-### 1. In das Projektverzeichnis wechseln
+### 1. Navigate to Project Directory
 ```bash
-cd /Users/andremotz/Development/schreckmonitor
+cd /path/to/schreckmonitor
 ```
 
-### 2. Abhängigkeiten installieren
+### 2. Install Dependencies
 ```bash
 npm install
 ```
 
-### 3. Datenbankverbindung konfigurieren
+### 3. Configure Database Connection
 ```bash
-# Konfigurationsdatei erstellen
+# Create configuration file
 cp config.example.js config.js
 
-# Bearbeiten Sie config.js mit Ihren Datenbankdaten
-nano config.js  # oder verwenden Sie Ihren bevorzugten Editor
+# Edit config.js with your database credentials
+nano config.js  # or use your preferred editor
 ```
 
-### 4. MariaDB vorbereiten
+### 4. Prepare MariaDB
 
-Stellen Sie sicher, dass MariaDB läuft und die Datenbank existiert:
+Ensure MariaDB is running and the database exists:
 
 ```sql
--- Mit MariaDB verbinden
+-- Connect to MariaDB
 mysql -u root -p
 
--- Datenbank erstellen (falls noch nicht vorhanden)
-CREATE DATABASE IF NOT EXISTS katzenschreck;
-USE katzenschreck;
+-- Create database (if not exists)
+CREATE DATABASE IF NOT EXISTS cat_deterrent;
+USE cat_deterrent;
 
--- Tabelle erstellen
+-- Create table with updated schema including thumbnails
 CREATE TABLE IF NOT EXISTS `detections_images` (
     `id` INT NOT NULL AUTO_INCREMENT,
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `camera_name` VARCHAR(50) NOT NULL,
     `accuracy` DECIMAL(3,4) NOT NULL,
+    `thumbnail_jpeg` MEDIUMBLOB,
     `blob_jpeg` MEDIUMBLOB NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 
--- Beispieldaten einfügen (optional)
-INSERT INTO detections_images (camera_name, accuracy, blob_jpeg) VALUES 
-('Kamera 1', 0.95, LOAD_FILE('/path/to/test/image.jpg')),
-('Kamera 2', 0.87, LOAD_FILE('/path/to/test/image2.jpg'));
+-- Insert sample data (optional)
+INSERT INTO detections_images (camera_name, accuracy, thumbnail_jpeg, blob_jpeg) VALUES 
+('Camera 1', 0.95, LOAD_FILE('/path/to/test/thumbnail.jpg'), LOAD_FILE('/path/to/test/image.jpg')),
+('Camera 2', 0.87, LOAD_FILE('/path/to/test/thumbnail2.jpg'), LOAD_FILE('/path/to/test/image2.jpg'));
 ```
 
-## App starten
+## Start App
 
-### Entwicklungsmodus (mit DevTools)
+### Development Mode (with DevTools)
 ```bash
 npm run dev
 ```
 
-### Produktionsmodus
+### Production Mode
 ```bash
 npm start
 ```
 
-### App für Distribution builden
+### Build App for Distribution
 ```bash
 npm run build
 ```
 
-## Mögliche Probleme und Lösungen
+## Common Issues and Solutions
 
 ### "npm: command not found"
-- Node.js ist nicht installiert oder nicht im PATH
-- Installieren Sie Node.js wie oben beschrieben
-- Terminal neu starten nach der Installation
+- Node.js is not installed or not in PATH
+- Install Node.js as described above
+- Restart terminal after installation
 
-### "Datenbankverbindung fehlgeschlagen"
-- Überprüfen Sie MariaDB-Status: `brew services list | grep mariadb`
-- MariaDB starten: `brew services start mariadb`
-- Verbindungsdaten in `config.js` überprüfen
+### "Database connection failed"
+- Check MariaDB status: `brew services list | grep mariadb`
+- Start MariaDB: `brew services start mariadb`
+- Verify connection data in `config.js`
 
 ### "electron: command not found"
-- Abhängigkeiten nicht installiert: `npm install`
-- Globale Installation: `npm install -g electron`
+- Dependencies not installed: `npm install`
+- Global installation: `npm install -g electron`
 
-### Berechtigungsfehler
+### Permission Errors
 ```bash
-# npm-Berechtigungen reparieren
+# Fix npm permissions
 sudo chown -R $(whoami) ~/.npm
 ```
 
-### Node.js-Version zu alt
+### Node.js Version Too Old
 ```bash
-# Mit nvm aktualisieren
+# Update with nvm
 nvm install --lts
 nvm use --lts
 
-# Oder mit Homebrew
+# Or with Homebrew
 brew upgrade node
 ```
 
-## Entwicklungstools (optional)
+## Development Tools (optional)
 
-### Git initialisieren
+### Initialize Git
 ```bash
 git init
 git add .
 git commit -m "Initial commit: Schreckmonitor Gallery App"
 ```
 
-### VS Code Extensions (empfohlen)
+### VS Code Extensions (recommended)
 - Electron Debugger
 - JavaScript (ES6) code snippets
 - Prettier - Code formatter
 - ESLint
 
-## Nächste Schritte
+## Next Steps
 
-Nach erfolgreicher Installation lesen Sie die `QUICK_START.md` für die ersten Schritte mit der Anwendung.
+After successful installation, read `QUICK_START.md` for getting started with the application.

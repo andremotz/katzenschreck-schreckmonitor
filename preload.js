@@ -1,22 +1,22 @@
 const { contextBridge, ipcRenderer } = require('electron');
 
-// Sichere API für den Renderer-Prozess
+// Secure API for the renderer process
 contextBridge.exposeInMainWorld('electronAPI', {
-    // Erkennungen abrufen
+    // Get detections (thumbnails)
     getDetections: () => ipcRenderer.invoke('get-detections'),
     
-    // Erkennungen nach Kamera filtern
+    // Filter detections by camera
     getDetectionsByCamera: (cameraName) => ipcRenderer.invoke('get-detections-by-camera', cameraName),
     
-    // Verfügbare Kameras abrufen
+    // Get available cameras
     getCameras: () => ipcRenderer.invoke('get-cameras'),
     
-    // Erkennung löschen
+    // Delete detection
     deleteDetection: (id) => ipcRenderer.invoke('delete-detection', id),
     
-    // Datenbankverbindung testen
+    // Test database connection
     testDbConnection: () => ipcRenderer.invoke('test-db-connection'),
     
-    // Vollbild einer Erkennung abrufen
+    // Get full-size image of a detection
     getFullImage: (id) => ipcRenderer.invoke('get-full-image', id)
 });

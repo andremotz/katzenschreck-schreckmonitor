@@ -1,5 +1,5 @@
-// Beispielkonfiguration für die Datenbankverbindung
-// Kopiere diese Datei zu config.js und passe die Werte an
+// Example configuration for database connection
+// Copy this file to config.js and adapt the values
 
 module.exports = {
     database: {
@@ -7,7 +7,7 @@ module.exports = {
         port: 3306,
         user: 'root',
         password: '',
-        database: 'katzenschreck'
+        database: 'cat_deterrent'
     },
     app: {
         title: 'Schreckmonitor Gallery',

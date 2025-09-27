@@ -1,7 +1,7 @@
 {
   "name": "schreckmonitor-gallery",
   "version": "1.0.0",
-  "description": "Eine Electron-Desktop-App für eine Bildergalerie mit MariaDB-Anbindung",
+  "description": "A modern Electron desktop application for viewing and managing cat deterrent detection images from a MariaDB database",
   "main": "main.js",
   "scripts": {
     "start": "electron .",
@@ -12,7 +12,7 @@
     "build:all": "electron-builder --win --mac --linux",
     "dev": "electron . --dev"
   },
-  "keywords": ["electron", "gallery", "mariadb", "desktop"],
+  "keywords": ["electron", "gallery", "mariadb", "desktop", "cat-deterrent", "detection", "images", "thumbnails"],
   "author": "Andre Motz",
   "license": "MIT",
   "devDependencies": {

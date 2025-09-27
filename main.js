@@ -24,15 +24,15 @@ class SchreckmonitorApp {
             show: false
         });
 
-        // Lade die HTML-Datei
+        // Load the HTML file
         this.mainWindow.loadFile('renderer/index.html');
 
-        // Zeige das Fenster erst, wenn es bereit ist
+        // Show window only when ready
         this.mainWindow.once('ready-to-show', () => {
             this.mainWindow.show();
         });
 
-        // Entwicklungsmodus: Öffne DevTools
+        // Development mode: Open DevTools
         if (process.argv.includes('--dev')) {
             this.mainWindow.webContents.openDevTools();
         }
@@ -43,81 +43,81 @@ class SchreckmonitorApp {
     }
 
     setupIpcHandlers() {
-        // Hole alle Erkennungsbilder aus der Datenbank
+        // Get all detection images from database (thumbnails)
         ipcMain.handle('get-detections', async () => {
             try {
                 return await this.dbManager.getDetections();
             } catch (error) {
-                console.error('Fehler beim Abrufen der Erkennungen:', error);
+                console.error('Error retrieving detections:', error);
                 throw error;
             }
         });
 
-        // Hole Erkennungen nach Kamera gefiltert
+        // Get detections filtered by camera
         ipcMain.handle('get-detections-by-camera', async (event, cameraName) => {
             try {
                 return await this.dbManager.getDetectionsByCamera(cameraName);
             } catch (error) {
-                console.error('Fehler beim Abrufen der Erkennungen nach Kamera:', error);
+                console.error('Error retrieving detections by camera:', error);
                 throw error;
             }
         });
 
-        // Hole alle verfügbaren Kameras
+        // Get all available cameras
         ipcMain.handle('get-cameras', async () => {
             try {
                 return await this.dbManager.getCameras();
             } catch (error) {
-                console.error('Fehler beim Abrufen der Kameras:', error);
+                console.error('Error retrieving cameras:', error);
                 throw error;
             }
         });
 
-        // Lösche eine Erkennung
+        // Delete a detection
         ipcMain.handle('delete-detection', async (event, id) => {
             try {
                 return await this.dbManager.deleteDetection(id);
             } catch (error) {
-                console.error('Fehler beim Löschen der Erkennung:', error);
+                console.error('Error deleting detection:', error);
                 throw error;
             }
         });
 
-        // Teste Datenbankverbindung
+        // Test database connection
         ipcMain.handle('test-db-connection', async () => {
             try {
                 return await this.dbManager.testConnection();
             } catch (error) {
-                console.error('Datenbankverbindung fehlgeschlagen:', error);
+                console.error('Database connection failed:', error);
                 throw error;
             }
         });
 
-        // Hole Vollbild einer Erkennung
+        // Get full-size image of a detection
         ipcMain.handle('get-full-image', async (event, id) => {
             try {
                 return await this.dbManager.getFullImageById(id);
             } catch (error) {
-                console.error('Fehler beim Abrufen des Vollbildes:', error);
+                console.error('Error retrieving full-size image:', error);
                 throw error;
             }
         });
     }
 
     async initialize() {
-        // Warte bis die App bereit ist
+        // Wait until app is ready
         await app.whenReady();
 
-        // Initialisiere Datenbankverbindung
+        // Initialize database connection
         await this.dbManager.initialize();
 
-        // Erstelle Hauptfenster
+        // Create main window
         this.createMainWindow();
 
-        // Setup IPC-Handler
+        // Setup IPC handlers
         this.setupIpcHandlers();
 
-        // App-Event-Handler
+        // App event handlers
         app.on('window-all-closed', () => {
             if (process.platform !== 'darwin') {
                 app.quit();
@@ -138,25 +138,25 @@ class SchreckmonitorApp {
     }
 }
 
-// Erstelle und starte die App
+// Create and start the app
 const schreckmonitorApp = new SchreckmonitorApp();
 
-// Initialisiere die App
+// Initialize the app
 schreckmonitorApp.initialize().catch(console.error);
 
-// Cleanup beim Beenden
+// Cleanup on exit
 app.on('before-quit', async () => {
     await schreckmonitorApp.cleanup();
 });
 
-// Verhindere mehrere Instanzen
+// Prevent multiple instances
 const gotTheLock = app.requestSingleInstanceLock();
 
 if (!gotTheLock) {
     app.quit();
 } else {
     app.on('second-instance', () => {
-        // Jemand hat versucht, eine zweite Instanz zu starten
+        // Someone tried to run a second instance
         if (schreckmonitorApp.mainWindow) {
             if (schreckmonitorApp.mainWindow.isMinimized()) {
                 schreckmonitorApp.mainWindow.restore();
