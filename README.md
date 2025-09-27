@@ -1,87 +1,89 @@
 # Schreckmonitor Gallery
 
-Eine moderne Electron-Desktop-Anwendung zur Anzeige und Verwaltung von Katzenschreck-Erkennungsbildern aus einer MariaDB-Datenbank.
+A modern Electron desktop application for viewing and managing cat deterrent detection images from a MariaDB database.
+
+![Schreckmonitor Gallery Screenshot](pictures/screenshot_mac.jpg)
 
 ## Features
 
-- 🖼️ **Moderne Bildergalerie** - Raster- und Listenansicht
-- 🔍 **Erweiterte Filterung** - Nach Kamera und Zeitraum
-- 📊 **Statistiken** - Überblick über Erkennungen und Kameras
-- 🗃️ **Datenbankintegration** - Direkte Anbindung an MariaDB
-- 🎨 **Responsive Design** - Funktioniert auf verschiedenen Bildschirmgrößen
-- ⚡ **Performance** - Optimiert für große Bildmengen
-- 🔒 **Sicherheit** - Sichere IPC-Kommunikation zwischen Prozessen
+- 🖼️ **Modern Image Gallery** - Grid and list view
+- 🔍 **Advanced Filtering** - By camera and time period
+- 📊 **Statistics** - Overview of detections and cameras
+- 🗃️ **Database Integration** - Direct connection to MariaDB
+- 🎨 **Responsive Design** - Works on various screen sizes
+- ⚡ **Performance** - Optimized for large image collections with thumbnail support
+- 🔒 **Security** - Secure IPC communication between processes
 
-## Systemanforderungen
+## System Requirements
 
-- Node.js 16 oder höher
+- Node.js 16 or higher
 - MariaDB Server
-- Windows 10/11, macOS 10.14+ oder Linux
+- Windows 10/11, macOS 10.14+ or Linux
 
 ## Installation
 
-1. **Repository klonen**
+1. **Clone Repository**
    ```bash
    git clone <repository-url>
    cd schreckmonitor
    ```
 
-2. **Abhängigkeiten installieren**
+2. **Install Dependencies**
    ```bash
    npm install
    ```
 
-3. **Datenbankverbindung konfigurieren**
+3. **Configure Database Connection**
    
-   Kopiere die Beispielkonfiguration und passe sie an:
+   Copy the example configuration and adapt it:
    ```bash
    cp config.example.js config.js
    ```
    
-   Bearbeite `config.js` mit deinen Datenbankdaten:
+   Edit `config.js` with your database credentials:
    ```javascript
    module.exports = {
        database: {
            host: 'localhost',
            port: 3306,
-           user: 'dein_benutzer',
-           password: 'dein_passwort',
-           database: 'katzenschreck'
+           user: 'your_username',
+           password: 'your_password',
+           database: 'cat_deterrent'
        }
    };
    ```
 
-4. **Umgebungsvariablen setzen (optional)**
+4. **Set Environment Variables (optional)**
    
-   Alternativ können Sie Umgebungsvariablen verwenden:
+   Alternatively, you can use environment variables:
    ```bash
    export DB_HOST=localhost
    export DB_PORT=3306
-   export DB_USER=dein_benutzer
-   export DB_PASSWORD=dein_passwort
-   export DB_NAME=katzenschreck
+   export DB_USER=your_username
+   export DB_PASSWORD=your_password
+   export DB_NAME=cat_deterrent
    ```
 
-## Verwendung
+## Usage
 
-### Entwicklungsmodus starten
+### Start Development Mode
 ```bash
 npm run dev
 ```
 
-### Produktionsversion starten
+### Start Production Version
 ```bash
 npm start
 ```
 
-### App builden
+### Build App
 ```bash
 npm run build
 ```
 
-## Datenbankschema
+## Database Schema
 
-Die Anwendung erwartet eine MariaDB-Tabelle mit folgendem Schema:
+The application expects a MariaDB table with the following schema:
 
 ```sql
 CREATE TABLE `detections_images` (
@@ -89,102 +91,114 @@ CREATE TABLE `detections_images` (
     `timestamp` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `camera_name` VARCHAR(50) NOT NULL,
     `accuracy` DECIMAL(3,4) NOT NULL,
+    `thumbnail_jpeg` MEDIUMBLOB,
     `blob_jpeg` MEDIUMBLOB NOT NULL,
     PRIMARY KEY (`id`)
 ) ENGINE=InnoDB;
 ```
 
-## Funktionen im Detail
+**Note:** The `thumbnail_jpeg` column is used for fast gallery loading, while `blob_jpeg` contains the full-size image displayed in the modal view.
 
-### 📸 Bildergalerie
-- **Rasteransicht**: Übersichtliche Darstellung aller Erkennungen in einem Grid
-- **Listenansicht**: Kompakte Darstellung mit zusätzlichen Informationen
-- **Sortierung**: Nach Datum, Genauigkeit oder Kamera
-- **Lazy Loading**: Optimierte Performance bei vielen Bildern
+## Features in Detail
 
-### 🔍 Filteroptionen
-- **Alle Kameras**: Zeigt alle Erkennungen an
-- **Nach Kamera**: Filtert Erkennungen einer bestimmten Kamera
-- **Genauigkeitsanzeige**: Farbkodierte Badges für verschiedene Genauigkeitsstufen
+### 📸 Image Gallery
+- **Grid View**: Clear display of all detections in a grid layout
+- **List View**: Compact display with additional information
+- **Sorting**: By date, accuracy, or camera
+- **Thumbnail Optimization**: Fast loading with thumbnail previews and full-size modal view
+- **Lazy Loading**: Optimized performance for large image collections
 
-### 📊 Statistiken
-- Gesamtanzahl der Erkennungen
-- Anzahl der aktiven Kameras
-- Zeitstempel der neuesten und ältesten Erkennung
+### 🔍 Filter Options
+- **All Cameras**: Shows all detections
+- **By Camera**: Filters detections from a specific camera
+- **Accuracy Display**: Color-coded badges for different accuracy levels
 
-### 🛠️ Verwaltung
-- **Erkennung löschen**: Einzelne Erkennungen können gelöscht werden
-- **Verbindungstest**: Überprüfung der Datenbankverbindung
-- **Aktualisierung**: Manuelle Aktualisierung der Daten
+### 📊 Statistics
+- Total number of detections
+- Number of active cameras
+- Timestamp of newest and oldest detection
 
-## Projektstruktur
+### 🛠️ Management
+- **Delete Detection**: Individual detections can be deleted
+- **Connection Test**: Database connection verification
+- **Refresh**: Manual data refresh
+
+## Project Structure
 
 ```
 schreckmonitor/
-├── assets/                 # App-Ressourcen (Icons, etc.)
-├── database/              # Datenbankmodule
-│   └── db-manager.js      # MariaDB-Verbindungsmanager
-├── renderer/              # Frontend-Dateien
-│   ├── index.html         # Haupt-HTML-Datei
-│   ├── styles.css         # CSS-Styling
-│   └── script.js          # Frontend-JavaScript
-├── main.js                # Hauptprozess (Electron)
-├── preload.js             # Preload-Script für sichere IPC
-├── package.json           # Projektkonfiguration
-├── config.example.js      # Beispielkonfiguration
-└── README.md              # Diese Datei
+├── assets/                 # App resources (Icons, etc.)
+├── database/              # Database modules
+│   └── db-manager.js      # MariaDB connection manager
+├── renderer/              # Frontend files
+│   ├── index.html         # Main HTML file
+│   ├── styles.css         # CSS styling
+│   └── script.js          # Frontend JavaScript
+├── main.js                # Main process (Electron)
+├── preload.js             # Preload script for secure IPC
+├── package.json           # Project configuration
+├── config.example.js      # Example configuration
+└── README.md              # This file
 ```
 
-## Entwicklung
+## Development
 
-### IPC-Kommunikation
-Die App verwendet Electron's IPC (Inter-Process Communication) für sichere Kommunikation zwischen dem Hauptprozess und dem Renderer-Prozess.
+### IPC Communication
+The app uses Electron's IPC (Inter-Process Communication) for secure communication between the main process and renderer process.
 
-**Verfügbare APIs:**
-- `getDetections()` - Alle Erkennungen abrufen
-- `getDetectionsByCamera(cameraName)` - Erkennungen nach Kamera filtern
-- `getCameras()` - Verfügbare Kameras abrufen
-- `deleteDetection(id)` - Erkennung löschen
-- `testDbConnection()` - Datenbankverbindung testen
+**Available APIs:**
+- `getDetections()` - Retrieve all detections (thumbnails)
+- `getDetectionsByCamera(cameraName)` - Filter detections by camera
+- `getCameras()` - Get available cameras
+- `getFullImage(id)` - Load full-size image for modal view
+- `deleteDetection(id)` - Delete detection
+- `testDbConnection()` - Test database connection
 
-### CSS-Variablen
-Das Design verwendet CSS Custom Properties für einfache Anpassung der Farben und Abstände:
+### CSS Variables
+The design uses CSS Custom Properties for easy customization of colors and spacing:
 
 ```css
 :root {
     --primary-color: #2563eb;
     --success-color: #059669;
     --error-color: #dc2626;
-    /* ... weitere Variablen */
+    /* ... more variables */
 }
 ```
 
-## Fehlerbehebung
+## Troubleshooting
 
-### Datenbankverbindung fehlgeschlagen
-1. Überprüfen Sie die Verbindungsdaten in `config.js`
-2. Stellen Sie sicher, dass der MariaDB-Server läuft
-3. Überprüfen Sie die Firewall-Einstellungen
-4. Verwenden Sie den "Verbindung testen" Button in der App
+### Database Connection Failed
+1. Check the connection data in `config.js`
+2. Ensure the MariaDB server is running
+3. Check firewall settings
+4. Use the "Test Connection" button in the app
 
-### App startet nicht
-1. Überprüfen Sie die Node.js-Version (`node --version`)
-2. Löschen Sie `node_modules` und führen Sie `npm install` erneut aus
-3. Überprüfen Sie die Konsole auf Fehlermeldungen
+### App Won't Start
+1. Check Node.js version (`node --version`)
+2. Delete `node_modules` and run `npm install` again
+3. Check console for error messages
 
-### Bilder werden nicht angezeigt
-1. Überprüfen Sie, ob die `blob_jpeg`-Spalte gültige JPEG-Daten enthält
-2. Überprüfen Sie die Datenbankberechtigungen
-3. Schauen Sie in die Entwicklertools (F12) für JavaScript-Fehler
+### Images Not Displaying
+1. Verify that the `thumbnail_jpeg` and `blob_jpeg` columns contain valid JPEG data
+2. Check database permissions
+3. Look in Developer Tools (F12) for JavaScript errors
+4. Ensure both thumbnail and full-size image data are present in the database
 
-## Lizenz
+## Performance Notes
 
-MIT License - Siehe LICENSE-Datei für Details.
+- **Thumbnails**: The app loads thumbnails first for fast gallery browsing
+- **Full Images**: Full-size images are loaded on-demand when opening the modal
+- **Database Optimization**: Consider adding indexes on `timestamp` and `camera_name` columns for better performance
 
-## Beiträge
+## License
 
-Beiträge sind willkommen! Bitte erstellen Sie einen Pull Request oder öffnen Sie ein Issue für Verbesserungsvorschläge.
+MIT License - See LICENSE file for details.
+
+## Contributing
+
+Contributions are welcome! Please create a Pull Request or open an Issue for suggestions.
 
 ## Support
 
-Bei Fragen oder Problemen erstellen Sie bitte ein Issue im Repository oder kontaktieren Sie den Entwickler.
+For questions or issues, please create an Issue in the repository or contact the developer.
